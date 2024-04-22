@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>PasswordGen</title>
+    <style>
+        #password_fields {
+            display: grid;
+            column-gap: 20px;
+            row-gap: 10px;
+            grid-template-columns: auto 1fr;
+        }
+    </style>
+    <script type="text/javascript" src="sha256.min.js"></script>
+    <script type="text/javascript">
+        'use strict';
+
+        window.addEventListener('load', function () {
+            let form = document.getElementById('password_fields');
+            form.addEventListener('submit', onPasswordFormSubmit);
+        });
+
+        window.addEventListener('focus', function () {
+            document.getElementById('domain').focus();
+        });
+
+        async function onPasswordFormSubmit(evt) {
+            evt.preventDefault();
+
+            try {
+                let domain = document.getElementById('domain').value,
+                    user = document.getElementById('user').value,
+                    masterPassword = document.getElementById('master_password').value,
+                    passwordLength = document.getElementById('password_length').value,
+                    passwordVersion = document.getElementById('password_version').value;
+
+                var password = generatePassword(domain, user, masterPassword, passwordLength, passwordVersion);
+
+                await navigator.clipboard.writeText(password);
+
+                writeToLog(`Copied password for '${domain}' to clipboard!`);
+            } catch (e) {
+                writeToLog(`Error - ${e}`);
+            }
+
+            evt.target.reset();
+            document.getElementById('domain').focus();
+        }
+
+        function writeToLog(message) {
+            document.getElementById('log').innerText = `${new Date().toLocaleString()} - ${message}`;
+        }
+
+        function generatePassword(domain, user, masterPassword, passwordLength, passwordVersion) {
+            let source = `${domain}:${user}:${masterPassword}:${passwordVersion}`;
+            return '@' + bytesToBase64(sha256.array(source)).substring(0, passwordLength - 2) + '%';
+        }
+
+        function bytesToBase64(bytes) {
+            const binString = Array.from(bytes, (byte) =>
+                String.fromCodePoint(byte),
+            ).join('');
+            return btoa(binString);
+        }
+    </script>
+</head>
+
+<body>
+    <form id="password_fields">
+        <label for="domain">Domain</label>
+        <input type="text" id="domain" required autofocus />
+
+        <label for="user">User</label>
+        <input type="text" id="user" required />
+
+        <label for="master_password">Master password</label>
+        <input type="password" id="master_password" required />
+
+        <label for="password_length">Length</label>
+        <input type="number" id="password_length" value="18" min="2" />
+
+        <label for="password_version">Version</label>
+        <input type="number" id="password_version" value="1" min="1" />
+
+        <button type="submit">Generate</button>
+    </form>
+    <pre id="log"></pre>
+</body>
+
+</html>
