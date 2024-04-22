@@ -6,11 +6,18 @@
     
     <title>PasswordGen</title>
     <style>
+        :root {
+            color-scheme: dark;
+        }
         #password_fields {
             display: grid;
             column-gap: 20px;
             row-gap: 10px;
             grid-template-columns: auto 1fr;
+        }
+        #log {
+            display: block;
+            margin-top: 10px;
         }
     </style>
     <script type="text/javascript" src="sha256.min.js"></script>
@@ -86,7 +93,7 @@
 
         <button type="submit">Generate</button>
     </form>
-    <pre id="log"></pre>
+    <output id="log" for="password_fields"></output>
 </body>
 
 </html>
