@@ -64,7 +64,7 @@
                     passwordLength = document.getElementById('password_length').value,
                     passwordVersion = document.getElementById('password_version').value;
 
-                var password = generatePassword(domain, user, masterPassword, passwordLength, passwordVersion);
+                let password = generatePassword(domain, user, masterPassword, passwordLength, passwordVersion);
 
                 await navigator.clipboard.writeText(password);
 
@@ -78,9 +78,14 @@
         }
 
         async function clearClipboard() {
-            resetFocus();
-            await navigator.clipboard.writeText('');
-            writeToLog('Cleared clipboard!');
+            try {
+                await navigator.clipboard.writeText('');
+                resetFocus();
+
+                writeToLog('Cleared clipboard!');
+            } catch (e) {
+                writeToLog(`Error - $[e}]`);
+            }
         }
 
         function resetFocus() {
@@ -106,15 +111,16 @@
 </head>
 
 <body>
-    <form id="password_fields">
+    <form id="password_fields" autocomplete="off">
         <label for="domain">Domain</label>
         <input type="text" id="domain" list="domains" placeholder="gmail.com" pattern="[A-z]+(\.[A-z]+)+"
-            spellcheck="false" autocomplete="off" required autofocus />
+            spellcheck="false" required autofocus />
         <datalist id="domains">
             <option value="gmail.com"></option>
             <option value="proton.me"></option>
             <option value="bol.com"></option>
             <option value="digid.nl"></option>
+            <option value="paypal.nl"></option>
             <option value="steampowered.com"></option>
             <option value="ea.com"></option>
             <option value="nvidia.com"></option>
@@ -123,7 +129,7 @@
         </datalist>
 
         <label for="user">User</label>
-        <input type="text" id="user" placeholder="Anonymous" spellcheck="false" autocomplete="off" required />
+        <input type="text" id="user" placeholder="Anonymous" spellcheck="false" required />
 
         <label for="master_password">Master password</label>
         <input type="password" id="master_password" required />
