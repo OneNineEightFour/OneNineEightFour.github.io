@@ -84,7 +84,7 @@
 
                 writeToLog('Cleared clipboard!');
             } catch (e) {
-                writeToLog(`Error - $[e}]`);
+                writeToLog(`Error - ${e}`);
             }
         }
 
@@ -128,8 +128,8 @@
             <option value="github.com"></option>
         </datalist>
 
-        <label for="user">User</label>
-        <input type="text" id="user" placeholder="Anonymous" spellcheck="false" required />
+        <label for="user">Username</label>
+        <input type="text" id="user" placeholder="User123" spellcheck="false" required />
 
         <label for="master_password">Master password</label>
         <input type="password" id="master_password" required />
